@@ -14,9 +14,13 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.activity.viewModels
+import androidx.lifecycle.Observer
 
 class MainActivity : AppCompatActivity() {
     private var mCount = 0;
+    private val model: NameViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -29,12 +33,21 @@ class MainActivity : AppCompatActivity() {
         val buttonPal = findViewById<Button>(R.id.button_palindrome)
         val buttonSwitchPage = findViewById<Button>(R.id.button_switchpage)
 
+        val nameObserver = Observer<Int> { newName ->
+            // Update the UI, in this case, a TextView.
+            mShowCount.text = newName.toString()
+        }
+
+        model.currentName.observe(this,nameObserver)
+
 
         buttonCountUp.setOnClickListener(View.OnClickListener {
             mShowCount.textSize = 160F
             mCount++;
             if (mShowCount != null)
                 mShowCount.text = mCount.toString()
+            model.currentName.setValue(mCount)
+
         })
 
         buttonToast.setOnClickListener {
@@ -78,7 +91,7 @@ class MainActivity : AppCompatActivity() {
 
         buttonSwitchPage.setOnClickListener(View.OnClickListener {
             val intent = Intent(this, MainActivity2::class.java).apply {
-                putExtra("key_nama","Hello Fathir")
+                putExtra("key_nama","Hello Alfathir")
             }
             startActivity(intent)
         })
